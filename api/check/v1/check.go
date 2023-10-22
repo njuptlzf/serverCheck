@@ -8,18 +8,18 @@ const (
 	FAIL
 )
 
-// 通用的检查器接口
+// Common checker interface
 type Checker interface {
-	// 检查项名称
+	// Check item name
 	Name() string
-	// 检查项详细描述信息
+	// Detailed description of the check item
 	Description() string
-	// 执行检查
+	// Perform check
 	Check() error
-	// 检查返回码
+	// Check return code
 	ReturnCode() ReturnCode
-	// 检查实际结果
+	// Actual check result
 	Result() string
-	// 检查不通过时候的建议
+	// Suggestions when the check fails
 	SuggestionOnFail() string
 }

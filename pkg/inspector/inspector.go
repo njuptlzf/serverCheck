@@ -11,13 +11,13 @@ import (
 	"github.com/njuptlzf/servercheck/pkg/register"
 )
 
-// Inspector 是一个检查器，用于检查环境各种检查项是否符合要求
+// Inspector is a checker used to check whether various environmental check items meet the requirements
 type Inspector struct {
-	// 命令行选项, 用于覆盖检查项默认值, 判断检查项开关
+	// Command line options, used to override default values of check items and determine check item switches
 	option *optionv1.Option
-	// 所有检查项
+	// All check items
 	checkers []checkv1.Checker
-	// 最终检查结果, 默认为 success, 如果有检查失败或者警告，会被设置为 fail 或者 warn
+	// Final check result, default is success, if there is a check failure or warning, it will be set to fail or warn
 	rc checkv1.ReturnCode
 }
 
@@ -47,7 +47,7 @@ func (i *Inspector) Check() error {
 	return nil
 }
 
-// 如果为 fail, 不通过; 否则通过
+// If it is fail, it does not pass; otherwise it passes
 func (i *Inspector) ZeroRc() bool {
 	if i.option.Strict {
 		return i.rc == checkv1.PASS
@@ -55,7 +55,7 @@ func (i *Inspector) ZeroRc() bool {
 	return i.rc != checkv1.FAIL
 }
 
-// 设置检查器的结果, 优先级 fail > warn > success, 意味着如果传进来是fail, 直接设置成fail, 如果传进来是warn, 但是当前结果是fail, 返回，以此类推
+// Set the result of the checker, priority fail > warn > success, which means that if it is fail, it is directly set to fail, if it is warn, but the current result is fail, return, and so on
 func (i *Inspector) setRC(rc checkv1.ReturnCode) {
 	if rc == checkv1.FAIL || i.rc == checkv1.FAIL {
 		i.rc = checkv1.FAIL
@@ -69,7 +69,7 @@ func (i *Inspector) setRC(rc checkv1.ReturnCode) {
 }
 
 func (i *Inspector) PrintResult() error {
-	result := "| Ability | Details | result | Passed | Recommendation |\n| --- | --- | --- | --- |\n"
+	result := "| Ability | Details | Result | Passed | Recommendation |\n| --- | --- | --- | --- | --- |\n"
 	for _, checker := range i.checkers {
 		enable, err := checkerEnabled(checker)
 		if err != nil {

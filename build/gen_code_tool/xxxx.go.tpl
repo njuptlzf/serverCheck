@@ -8,28 +8,27 @@ import (
 )
 
 type XXXXChecker struct {
-	// 名称
+	// Name
 	name string
-	// 具体检查项
+	// Specific check item
 	item *XXXXOption
-	// 详细描述
+	// Detailed description
 	description string
-	// 失败建议
+	// Suggestion on failure
 	suggestionOnFail string
-	// 返回码: fail 失败, warn 警告, ok 成功
+	// Return code: fail, warn, or ok
 	rc v1.ReturnCode
-	// 检查实际结果
+	// Actual check result
 	result string
-	// 专用的获取接口
+	// Dedicated retrieval interface
 	retriever XXXXRetriever
 }
 
-// 专用的检查项, 需要按需定义
+// Dedicated check item
 type XXXXOption struct {
 	// to complete
 }
 
-// 1. hard code is used to describe the Checker interface that must be implemented. 2. for automatic registration
 var _ v1.Checker = &XXXXChecker{}
 
 func init() {
@@ -37,7 +36,6 @@ func init() {
 	register.RegisterCheck(newXXXXChecker(&XXXXOption{}, &RealXXXXRetriever{}))
 }
 
-// Special interface needs to be implemented on demand
 type XXXXRetriever interface {
 	Get() (*XXXXOption, error)
 }
@@ -55,7 +53,7 @@ func newXXXXChecker(item *XXXXOption, retriever XXXXRetriever) *XXXXChecker {
 	return &XXXXChecker{
 		name:      "XXXX",
 		item:      item,
-		description: "",
+		description: "check XXXX",
 		retriever: retriever,
 	}
 }

@@ -12,13 +12,13 @@ make build
 output
 ```text
 register checker: CPUArch
-register checker: CPU
+register checker: CPUCore
 check:  CPUArch
-check:  CPU
-| Ability | Details | result | Passed | Recommendation |
-| --- | --- | --- | --- |
+check:  CPUCore
+| Ability | Details | Result | Passed | Recommendation |
+| --- | --- | --- | --- | --- |
 | CPUArch | check CPU arch | [arch] actual: [amd64], expect: [amd64 arm64] | pass |  |
-| CPU | check CPU core | [number of cores] acutal: 8, expect: 4 | pass |  |
+| CPUCore | check CPU core | [number of cores] acutal: 8, expect: 4 | pass |  |
 ```
 
 ## todo

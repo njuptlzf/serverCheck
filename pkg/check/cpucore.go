@@ -11,32 +11,30 @@ import (
 )
 
 type CPUCoreChecker struct {
-	// 名称
+	// Name
 	name string
-	// 具体检查项
+	// Specific check item
 	item *CPUCoreOption
-	// 详细描述
+	// Detailed description
 	description string
-	// 失败建议
+	// Suggestion on failure
 	suggestionOnFail string
-	// 返回码: fail 失败, warn 警告, ok 成功
+	// Return code: fail, warn, ok
 	rc v1.ReturnCode
-	// 检查实际结果
+	// Actual check result
 	result string
-	// 专用的获取接口
+	// Dedicated retrieval interface
 	retriever CPURetriever
 }
 
-// 专用的检查项, 需要按需定义
 type CPUCoreOption struct {
-	// 核心数
+	// Number of cores
 	number int
-	// todo: 支持该功能
-	// cpu利用率
+	// todo: to support
+	// cpu usage
 	// usage float64
 }
 
-// 1.hard code 描述需要实现通用 Checker 2.自动注册的标识
 var _ v1.Checker = &CPUCoreChecker{}
 
 func init() {
@@ -45,7 +43,6 @@ func init() {
 	}, &RealCPURetriever{}))
 }
 
-// 专用的检查项接口，需要按需实现
 type CPURetriever interface {
 	Get() (*CPUCoreOption, error)
 }
@@ -62,7 +59,7 @@ func (r *RealCPURetriever) Get() (*CPUCoreOption, error) {
 
 func newCPUChecker(item *CPUCoreOption, retriever CPURetriever) *CPUCoreChecker {
 	return &CPUCoreChecker{
-		name:        "CPU",
+		name:        "CPUCore",
 		description: "check CPU core",
 		item:        item,
 		retriever:   retriever,
