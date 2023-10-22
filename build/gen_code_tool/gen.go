@@ -11,7 +11,6 @@ import (
 )
 
 func main() {
-	// 引用 flag包，将ablity name作为 flag 传入
 	var abilityName string
 	flag.StringVar(&abilityName, "ability", "", "ability name")
 	flag.Parse()
@@ -33,8 +32,8 @@ func main() {
 	logrus.Info("Now you can refer to \"pkg/check/cpu.go\", \"pkg/check/cpu_test.go\" to complete your item, Get, diff, Check and mockOption")
 }
 
-// 为空, 报错返回
-// 不是字母数字下划线，报错返回
+// If the name is empty, return an error
+// If the name contains characters other than letters, numbers, and underscores, return an error
 func verifyAbilityName(name string) error {
 	if name == "" {
 		return fmt.Errorf("ability name is empty")
@@ -48,7 +47,7 @@ func verifyAbilityName(name string) error {
 }
 
 func genFile(abilityName, templatePath, outputPath string) error {
-	// 如何outputpath存在，直接退出
+	// If the output path already exists, exit directly
 	if _, err := os.Stat(outputPath); err == nil {
 		logrus.Warnf("Output file %s already exists", outputPath)
 		return nil
@@ -59,7 +58,7 @@ func genFile(abilityName, templatePath, outputPath string) error {
 		return errors.Trace(err)
 	}
 
-	// 首字母大写
+	// Capitalize the first letter
 	title := strings.Title(abilityName)
 	outputBytes := []byte(strings.ReplaceAll(string(templateBytes), "XXXX", title))
 	if err := os.WriteFile(outputPath, outputBytes, 0644); err != nil {

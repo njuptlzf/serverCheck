@@ -6,35 +6,33 @@ import (
 
 	v1 "github.com/njuptlzf/servercheck/api/check/v1"
 	// "github.com/njuptlzf/servercheck/pkg/option"
+	"github.com/juju/errors"
 	"github.com/njuptlzf/servercheck/pkg/register"
 	"github.com/njuptlzf/servercheck/pkg/utils/diff"
-	"github.com/juju/errors"
 )
 
 type CPUArchChecker struct {
-	// 名称
+	// Name
 	name string
-	// 具体检查项
+	// Specific check item
 	item *CPUArchOption
-	// 详细描述
+	// Detailed description
 	description string
-	// 失败建议
+	// Suggestion on failure
 	suggestionOnFail string
-	// 返回码: fail 失败, warn 警告, ok 成功
+	// Return code: fail, warn, or ok
 	rc v1.ReturnCode
-	// 检查实际结果
+	// Actual check result
 	result string
-	// 专用的获取接口
+	// Dedicated retrieval interface
 	retriever CPUArchRetriever
 }
 
-// 专用的检查项, 需要按需定义
 type CPUArchOption struct {
-	// 架构
+	// Architecture
 	arch []string
 }
 
-// 1. hard code is used to describe the Checker interface that must be implemented. 2. for automatic registration
 var _ v1.Checker = &CPUArchChecker{}
 
 func init() {
@@ -46,7 +44,6 @@ func init() {
 	}, &RealCPUArchRetriever{}))
 }
 
-// Special interface needs to be implemented on demand
 type CPUArchRetriever interface {
 	Get() (*CPUArchOption, error)
 }
