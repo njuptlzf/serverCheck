@@ -46,6 +46,12 @@ func verifyAbilityName(name string) error {
 	return nil
 }
 
+func toCamelCase(s string) string {
+	s = strings.ReplaceAll(s, "_", " ")
+	s = strings.Title(s)
+	return strings.ReplaceAll(s, " ", "")
+}
+
 func genFile(abilityName, templatePath, outputPath string) error {
 	// If the output path already exists, exit directly
 	if _, err := os.Stat(outputPath); err == nil {
@@ -58,8 +64,8 @@ func genFile(abilityName, templatePath, outputPath string) error {
 		return errors.Trace(err)
 	}
 
-	// Capitalize the first letter
-	title := strings.Title(abilityName)
+	// Change abilityName underline to camelCase
+	title := toCamelCase(abilityName)
 	outputBytes := []byte(strings.ReplaceAll(string(templateBytes), "XXXX", title))
 	if err := os.WriteFile(outputPath, outputBytes, 0644); err != nil {
 		logrus.Errorf("Failed to write output file: %v\n", err)
