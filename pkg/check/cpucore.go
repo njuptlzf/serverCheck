@@ -72,10 +72,10 @@ func (c *CPUCoreChecker) Check() error {
 		return errors.Trace(err)
 	}
 
+	c.rc = v1.WARN
+
 	if c.diff(actual) {
 		c.rc = v1.PASS
-	} else {
-		c.rc = v1.WARN
 	}
 	return nil
 }

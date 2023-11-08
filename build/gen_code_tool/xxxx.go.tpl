@@ -64,12 +64,12 @@ func (c *XXXXChecker) Check() error {
 		return errors.Trace(err)
 	}
 
+	// default rc: WARN or FAIL
+	c.rc = v1.FAIL
+	// c.rc = v1.WARN
+
 	if c.diff(actual) {
 		c.rc = v1.PASS
-	} else {
-		// Returns WARN or FAIL when failed, defined as needed
-		c.rc = v1.FAIL
-		// c.rc = v1.WARN
 	}
 	return nil
 }

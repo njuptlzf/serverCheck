@@ -73,10 +73,10 @@ func (c *CPUArchChecker) Check() error {
 		return errors.Trace(err)
 	}
 
+	c.rc = v1.FAIL
+
 	if c.diff(actual) {
 		c.rc = v1.PASS
-	} else {
-		c.rc = v1.FAIL
 	}
 	return nil
 }
