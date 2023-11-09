@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"runtime"
 
-	v1 "github.com/njuptlzf/servercheck/api/check/v1"
-	// "github.com/njuptlzf/servercheck/pkg/option"
 	"github.com/juju/errors"
+
+	v1 "github.com/njuptlzf/servercheck/api/check/v1"
+	optionv1 "github.com/njuptlzf/servercheck/api/option/v1"
+	"github.com/njuptlzf/servercheck/pkg/option"
 	"github.com/njuptlzf/servercheck/pkg/register"
 )
 
@@ -40,21 +42,24 @@ var _ v1.Checker = &CPUCoreChecker{}
 func init() {
 	register.RegisterCheck(newCPUChecker(&CPUCoreOption{
 		number: 4,
-	}, &RealCPURetriever{}))
+	}, &RealCPURetriever{option.Opt}))
 }
 
 type CPURetriever interface {
 	Get() (*CPUCoreOption, error)
 }
 
-type RealCPURetriever struct{}
+type RealCPURetriever struct {
+	*optionv1.Option
+}
 
 var _ CPURetriever = &RealCPURetriever{}
 
-func (r *RealCPURetriever) Get() (*CPUCoreOption, error) {
-	return &CPUCoreOption{
+func (r *RealCPURetriever) Get() (actual *CPUCoreOption, err error) {
+	actual = &CPUCoreOption{
 		number: runtime.NumCPU(),
-	}, nil
+	}
+	return
 }
 
 func newCPUChecker(item *CPUCoreOption, retriever CPURetriever) *CPUCoreChecker {

@@ -1,10 +1,12 @@
 package check
 
 import (
-	v1 "github.com/njuptlzf/servercheck/api/check/v1"
-	// "github.com/njuptlzf/servercheck/pkg/option"
-	"github.com/njuptlzf/servercheck/pkg/register"
 	"github.com/juju/errors"
+
+	v1 "github.com/njuptlzf/servercheck/api/check/v1"
+	optionv1 "github.com/njuptlzf/servercheck/api/option/v1"
+	"github.com/njuptlzf/servercheck/pkg/option"
+	"github.com/njuptlzf/servercheck/pkg/register"
 )
 
 type XXXXChecker struct {
@@ -33,20 +35,22 @@ var _ v1.Checker = &XXXXChecker{}
 
 func init() {
 	// to complete
-	register.RegisterCheck(newXXXXChecker(&XXXXOption{}, &RealXXXXRetriever{}))
+	register.RegisterCheck(newXXXXChecker(&XXXXOption{}, &RealXXXXRetriever{option.Opt}))
 }
 
 type XXXXRetriever interface {
 	Get() (*XXXXOption, error)
 }
 
-type RealXXXXRetriever struct{}
+type RealXXXXRetriever struct{
+	*optionv1.Option
+}
 
 var _ XXXXRetriever = &RealXXXXRetriever{}
 
-func (r *RealXXXXRetriever) Get() (*XXXXOption, error) {
+func (r *RealXXXXRetriever) Get() (actual *XXXXOption,err error) {
 	// to complete
-	return &XXXXOption{}, nil
+	return
 }
 
 func newXXXXChecker(item *XXXXOption, retriever XXXXRetriever) *XXXXChecker {

@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"runtime"
 
-	v1 "github.com/njuptlzf/servercheck/api/check/v1"
-	// "github.com/njuptlzf/servercheck/pkg/option"
 	"github.com/juju/errors"
+
+	v1 "github.com/njuptlzf/servercheck/api/check/v1"
+	optionv1 "github.com/njuptlzf/servercheck/api/option/v1"
+	"github.com/njuptlzf/servercheck/pkg/option"
 	"github.com/njuptlzf/servercheck/pkg/register"
 	"github.com/njuptlzf/servercheck/pkg/utils/diff"
 )
@@ -41,21 +43,24 @@ func init() {
 			"amd64",
 			"arm64",
 		},
-	}, &RealCPUArchRetriever{}))
+	}, &RealCPUArchRetriever{option.Opt}))
 }
 
 type CPUArchRetriever interface {
 	Get() (*CPUArchOption, error)
 }
 
-type RealCPUArchRetriever struct{}
+type RealCPUArchRetriever struct {
+	*optionv1.Option
+}
 
 var _ CPUArchRetriever = &RealCPUArchRetriever{}
 
-func (r *RealCPUArchRetriever) Get() (*CPUArchOption, error) {
-	return &CPUArchOption{
+func (r *RealCPUArchRetriever) Get() (actual *CPUArchOption, err error) {
+	actual = &CPUArchOption{
 		arch: []string{runtime.GOARCH},
-	}, nil
+	}
+	return
 }
 
 func newCPUArchChecker(item *CPUArchOption, retriever CPUArchRetriever) *CPUArchChecker {
