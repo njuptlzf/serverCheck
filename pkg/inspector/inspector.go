@@ -31,7 +31,7 @@ func NewInspector() *Inspector {
 
 func (i *Inspector) Check() error {
 	for _, c := range i.checkers {
-		enable, err := checkerEnabled(c)
+		enable, err := CheckerEnabled(c)
 		if err != nil {
 			return errors.Trace(err)
 		}
@@ -71,7 +71,7 @@ func (i *Inspector) setRC(rc checkv1.ReturnCode) {
 func (i *Inspector) PrintResult() error {
 	result := "| Ability | Details | Result | Passed | Recommendation |\n| --- | --- | --- | --- | --- |\n"
 	for _, checker := range i.checkers {
-		enable, err := checkerEnabled(checker)
+		enable, err := CheckerEnabled(checker)
 		if err != nil {
 			return errors.Trace(err)
 		}
@@ -104,7 +104,7 @@ func returnCodeToString(rc checkv1.ReturnCode) string {
 	}
 }
 
-func checkerEnabled(checker checkv1.Checker) (bool, error) {
+func CheckerEnabled(checker checkv1.Checker) (bool, error) {
 	switch checker.(type) {
 	case *check.CPUCoreChecker:
 		return option.Opt.CPUCore, nil
