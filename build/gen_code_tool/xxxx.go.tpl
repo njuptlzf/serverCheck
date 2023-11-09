@@ -72,18 +72,22 @@ func (c *XXXXChecker) Check() error {
 	c.rc = v1.FAIL
 	// c.rc = v1.WARN
 
-	if c.diff(actual) {
+	ok, err := c.diff(actual)
+	if err != nil {
+		return errors.Trace(err)
+	}
+	if ok {
 		c.rc = v1.PASS
 	}
 	return nil
 }
 
-func (c *XXXXChecker) diff(actual *XXXXOption) bool {
+func (c *XXXXChecker) diff(actual *XXXXOption) (bool, error) {
 	pass := true
 
 	// to complete
 
-	return pass
+	return pass, nil
 }
 
 func (c *XXXXChecker) Name() string {

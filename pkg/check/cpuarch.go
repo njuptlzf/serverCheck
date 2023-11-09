@@ -80,13 +80,17 @@ func (c *CPUArchChecker) Check() error {
 
 	c.rc = v1.FAIL
 
-	if c.diff(actual) {
+	ok, err := c.diff(actual)
+	if err != nil {
+		return errors.Trace(err)
+	}
+	if ok {
 		c.rc = v1.PASS
 	}
 	return nil
 }
 
-func (c *CPUArchChecker) diff(actual *CPUArchOption) bool {
+func (c *CPUArchChecker) diff(actual *CPUArchOption) (bool, error) {
 	pass := true
 
 	archInfo := fmt.Sprintf("[arch] actual: %s, expect: %s", actual.arch, c.item.arch)
@@ -97,7 +101,7 @@ func (c *CPUArchChecker) diff(actual *CPUArchOption) bool {
 		c.suggestionOnFail += "[arch] change to a compatible server"
 	}
 
-	return pass
+	return pass, nil
 }
 
 func (c *CPUArchChecker) Name() string {

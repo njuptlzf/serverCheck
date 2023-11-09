@@ -79,13 +79,17 @@ func (c *CPUCoreChecker) Check() error {
 
 	c.rc = v1.WARN
 
-	if c.diff(actual) {
+	ok, err := c.diff(actual)
+	if err != nil {
+		return errors.Trace(err)
+	}
+	if ok {
 		c.rc = v1.PASS
 	}
 	return nil
 }
 
-func (c *CPUCoreChecker) diff(actual *CPUCoreOption) bool {
+func (c *CPUCoreChecker) diff(actual *CPUCoreOption) (bool, error) {
 	pass := true
 	coreNumInfo := fmt.Sprintf("[number of cores] acutal: %d, expect: %d", actual.number, c.item.number)
 	c.result += coreNumInfo
@@ -94,7 +98,7 @@ func (c *CPUCoreChecker) diff(actual *CPUCoreOption) bool {
 		pass = false
 		c.suggestionOnFail += "[number of cores] increase server's CPU"
 	}
-	return pass
+	return pass, nil
 }
 
 func (c *CPUCoreChecker) Name() string {
