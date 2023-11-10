@@ -133,6 +133,7 @@ type DiskAvailRetriever interface {
 var _ DiskAvailRetriever = &RealDiskAvailRetriever{}
 
 func (r *RealDiskAvailRetriever) Collect() (*expDiskAvailOption, *actDiskAvailOption, error) {
+	r.act = &actDiskAvailOption{}
 	// The structure of each element: separated by semicolons, directory path, minimum expected value, failed suggestion. For example, /;100G;>= 100G
 	// Loop through DiskForDir, get the actual available space for each directory
 	for _, c := range r.exp.DiskForDir {

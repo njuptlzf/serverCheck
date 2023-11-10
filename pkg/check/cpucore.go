@@ -116,6 +116,7 @@ type CPUCoreRetriever interface {
 var _ CPUCoreRetriever = &RealCPUCoreRetriever{}
 
 func (r *RealCPUCoreRetriever) Collect() (*expCPUCoreOption, *actCPUCoreOption, error) {
+	r.act = &actCPUCoreOption{}
 	r.act.number = runtime.NumCPU()
 	return r.exp, r.act, nil
 }

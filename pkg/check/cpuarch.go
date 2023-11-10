@@ -126,6 +126,7 @@ type CPUArchRetriever interface {
 var _ CPUArchRetriever = &RealCPUArchRetriever{}
 
 func (r *RealCPUArchRetriever) Collect() (*expCPUArchOption, *actCPUArchOption, error) {
+	r.act = &actCPUArchOption{}
 	r.act.arch = []string{runtime.GOARCH}
 	return r.exp, r.act, nil
 }

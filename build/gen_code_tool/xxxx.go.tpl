@@ -109,6 +109,8 @@ type XXXXRetriever interface {
 var _ XXXXRetriever = &RealXXXXRetriever{}
 
 func (r *RealXXXXRetriever) Collect() (*expXXXXOption, *actXXXXOption, error) {
+	r.act = &actXXXXOption{}
+
 	// to complete
 
 	return r.exp, r.act, nil

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 
 	_ "github.com/njuptlzf/servercheck/pkg/check"
@@ -14,7 +13,6 @@ var rootCmd = &cobra.Command{
 	Use:   "servercheck",
 	Short: "A tool to check server environment",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println(option.Opt)
 		inspector := inspector.NewInspector()
 		// validate
 		if err := inspector.Validate(); err != nil {
