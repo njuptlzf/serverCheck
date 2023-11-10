@@ -12,11 +12,11 @@ import (
 	"github.com/njuptlzf/servercheck/pkg/register"
 )
 
+var _ v1.Checker = &CPUCoreChecker{}
+
 type CPUCoreChecker struct {
 	// Name
 	name string
-	// Specific check item
-	item *CPUCoreOption
 	// Detailed description
 	description string
 	// Suggestion on failure
@@ -26,60 +26,30 @@ type CPUCoreChecker struct {
 	// Actual check result
 	result string
 	// Dedicated retrieval interface
-	retriever CPURetriever
+	retriever CPUCoreRetriever
 }
-
-type CPUCoreOption struct {
-	// Number of cores
-	number int
-	// todo: to support
-	// cpu usage
-	// usage float64
-}
-
-var _ v1.Checker = &CPUCoreChecker{}
 
 func init() {
-	register.RegisterCheck(newCPUChecker(&CPUCoreOption{
-		number: 4,
-	}, &RealCPURetriever{option.Opt}))
+	register.RegisterCheck(newCPUCoreChecker(&RealCPUCoreRetriever{exp: &expCPUCoreOption{Option: option.Opt}}))
 }
 
-type CPURetriever interface {
-	Get() (*CPUCoreOption, error)
-}
-
-type RealCPURetriever struct {
-	*optionv1.Option
-}
-
-var _ CPURetriever = &RealCPURetriever{}
-
-func (r *RealCPURetriever) Get() (actual *CPUCoreOption, err error) {
-	actual = &CPUCoreOption{
-		number: runtime.NumCPU(),
-	}
-	return
-}
-
-func newCPUChecker(item *CPUCoreOption, retriever CPURetriever) *CPUCoreChecker {
+func newCPUCoreChecker(retriever CPUCoreRetriever) *CPUCoreChecker {
 	return &CPUCoreChecker{
 		name:        "CPUCore",
 		description: "check CPU core",
-		item:        item,
 		retriever:   retriever,
 	}
 }
 
 func (c *CPUCoreChecker) Check() error {
-	actual, err := c.retriever.Get()
+	exp, act, err := c.retriever.Collect()
 	if err != nil {
 		return errors.Trace(err)
 	}
 
 	c.rc = v1.WARN
 
-	ok, err := c.diff(actual)
+	ok, err := c.diff(exp, act)
 	if err != nil {
 		return errors.Trace(err)
 	}
@@ -89,12 +59,12 @@ func (c *CPUCoreChecker) Check() error {
 	return nil
 }
 
-func (c *CPUCoreChecker) diff(actual *CPUCoreOption) (bool, error) {
+func (c *CPUCoreChecker) diff(exp *expCPUCoreOption, act *actCPUCoreOption) (bool, error) {
 	pass := true
-	coreNumInfo := fmt.Sprintf("[number of cores] acutal: %d, expect: %d", actual.number, c.item.number)
+	coreNumInfo := fmt.Sprintf("[number of cores] acutal: %d, expect: %d", act.number, exp.CPUCoreNum)
 	c.result += coreNumInfo
 
-	if actual.number < c.item.number {
+	if act.number < exp.CPUCoreNum {
 		pass = false
 		c.suggestionOnFail += "[number of cores] increase server's CPU"
 	}
@@ -119,4 +89,33 @@ func (c *CPUCoreChecker) Result() string {
 
 func (c *CPUCoreChecker) SuggestionOnFail() string {
 	return c.suggestionOnFail
+}
+
+// CPUCoreOption is a dedicated check item
+type RealCPUCoreRetriever struct {
+	// expect option value
+	exp *expCPUCoreOption
+
+	// actual option value
+	act *actCPUCoreOption
+}
+
+type expCPUCoreOption struct {
+	*optionv1.Option
+}
+
+type actCPUCoreOption struct {
+	// Number of cores
+	number int
+}
+
+type CPUCoreRetriever interface {
+	Collect() (*expCPUCoreOption, *actCPUCoreOption, error)
+}
+
+var _ CPUCoreRetriever = &RealCPUCoreRetriever{}
+
+func (r *RealCPUCoreRetriever) Collect() (*expCPUCoreOption, *actCPUCoreOption, error) {
+	r.act.number = runtime.NumCPU()
+	return r.exp, r.act, nil
 }

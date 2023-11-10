@@ -29,7 +29,7 @@ func main() {
 	if err := genFile(abilityName, testFileTplPath, testFileOutputPath); err != nil {
 		logrus.Fatal(err)
 	}
-	logrus.Info("Now you can refer to \"pkg/check/cpu.go\", \"pkg/check/cpu_test.go\" to complete your item, Get, diff, Check and mockOption")
+	logrus.Info("Now you can refer to \"pkg/check/cpucore.go\", \"pkg/check/cpucore_test.go\" to complete your item, Get, diff, Check and mockOption")
 }
 
 // If the name is empty, return an error

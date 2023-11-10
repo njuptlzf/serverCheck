@@ -9,16 +9,16 @@ import (
 	"github.com/njuptlzf/servercheck/pkg/register"
 )
 
+var _ v1.Checker = &XXXXChecker{}
+
 type XXXXChecker struct {
 	// Name
 	name string
-	// Specific check item
-	item *XXXXOption
 	// Detailed description
 	description string
 	// Suggestion on failure
 	suggestionOnFail string
-	// Return code: fail, warn, or ok
+	// Return code: fail, warn, ok
 	rc v1.ReturnCode
 	// Actual check result
 	result string
@@ -26,53 +26,28 @@ type XXXXChecker struct {
 	retriever XXXXRetriever
 }
 
-// Dedicated check item
-type XXXXOption struct {
-	// to complete
-}
-
-var _ v1.Checker = &XXXXChecker{}
-
 func init() {
-	// to complete
-	register.RegisterCheck(newXXXXChecker(&XXXXOption{}, &RealXXXXRetriever{option.Opt}))
+	register.RegisterCheck(newXXXXChecker(&RealXXXXRetriever{exp: &expXXXXOption{Option: option.Opt}}))
 }
 
-type XXXXRetriever interface {
-	Get() (*XXXXOption, error)
-}
-
-type RealXXXXRetriever struct{
-	*optionv1.Option
-}
-
-var _ XXXXRetriever = &RealXXXXRetriever{}
-
-func (r *RealXXXXRetriever) Get() (actual *XXXXOption,err error) {
-	// to complete
-	return
-}
-
-func newXXXXChecker(item *XXXXOption, retriever XXXXRetriever) *XXXXChecker {
+func newXXXXChecker(retriever XXXXRetriever) *XXXXChecker {
 	return &XXXXChecker{
-		name:      "XXXX",
-		item:      item,
+		name:        "XXXX",
 		description: "check XXXX",
-		retriever: retriever,
+		retriever:   retriever,
 	}
 }
 
 func (c *XXXXChecker) Check() error {
-	actual, err := c.retriever.Get()
+	exp, act, err := c.retriever.Collect()
 	if err != nil {
 		return errors.Trace(err)
 	}
 
-	// default rc: WARN or FAIL
-	c.rc = v1.FAIL
 	// c.rc = v1.WARN
+	c.rc = v1.FAIL
 
-	ok, err := c.diff(actual)
+	ok, err := c.diff(exp, act)
 	if err != nil {
 		return errors.Trace(err)
 	}
@@ -82,7 +57,7 @@ func (c *XXXXChecker) Check() error {
 	return nil
 }
 
-func (c *XXXXChecker) diff(actual *XXXXOption) (bool, error) {
+func (c *XXXXChecker) diff(exp *expXXXXOption, act *actXXXXOption) (bool, error) {
 	pass := true
 
 	// to complete
@@ -108,4 +83,33 @@ func (c *XXXXChecker) Result() string {
 
 func (c *XXXXChecker) SuggestionOnFail() string {
 	return c.suggestionOnFail
+}
+
+// XXXXOption is a dedicated check item
+type RealXXXXRetriever struct {
+	// expect option value
+	exp *expXXXXOption
+
+	// actual option value
+	act *actXXXXOption
+}
+
+type expXXXXOption struct {
+	*optionv1.Option
+}
+
+type actXXXXOption struct {
+	// to complete
+}
+
+type XXXXRetriever interface {
+	Collect() (*expXXXXOption, *actXXXXOption, error)
+}
+
+var _ XXXXRetriever = &RealXXXXRetriever{}
+
+func (r *RealXXXXRetriever) Collect() (*expXXXXOption, *actXXXXOption, error) {
+	// to complete
+
+	return r.exp, r.act, nil
 }

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	v1 "github.com/njuptlzf/servercheck/api/check/v1"
+	optionv1 "github.com/njuptlzf/servercheck/api/option/v1"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -32,11 +33,16 @@ func TestCPUChecker(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.desc, func(t *testing.T) {
-			cpuChecker := newCPUChecker(&CPUCoreOption{
-				number: 4,
-			}, &mockCPURetriever{actual: &CPUCoreOption{
-				number: tc.actual,
-			}, err: nil})
+			cpuChecker := newCPUCoreChecker(&mockCPUCoreRetriever{
+				exp: &expCPUCoreOption{
+					Option: &optionv1.Option{
+						CPUCoreNum: 4,
+					},
+				},
+				act: &actCPUCoreOption{
+					number: tc.actual,
+				},
+			})
 			err := cpuChecker.Check()
 			assert.NoError(t, err)
 			assert.Equal(t, tc.expectRC, cpuChecker.ReturnCode())
@@ -44,11 +50,12 @@ func TestCPUChecker(t *testing.T) {
 	}
 }
 
-type mockCPURetriever struct {
-	actual *CPUCoreOption
-	err    error
+type mockCPUCoreRetriever struct {
+	exp *expCPUCoreOption
+	act *actCPUCoreOption
+	err error
 }
 
-func (r *mockCPURetriever) Get() (*CPUCoreOption, error) {
-	return r.actual, r.err
+func (r *mockCPUCoreRetriever) Collect() (*expCPUCoreOption, *actCPUCoreOption, error) {
+	return r.exp, r.act, r.err
 }

@@ -27,11 +27,13 @@ func TestCPUArchChecker(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.desc, func(t *testing.T) {
-			checker := newCPUArchChecker(&CPUArchOption{
-				arch: []string{"amd64", "arm64"},
-			}, &mockCPUArchRetriever{actual: &CPUArchOption{
-				arch: []string{tc.arch},
-			}, err: nil})
+			checker := newCPUArchChecker(&mockCPUArchRetriever{
+				exp: &expCPUArchOption{
+					arch: []string{"amd64", "arm64"},
+				},
+				act: &actCPUArchOption{
+					arch: []string{tc.arch},
+				}})
 			err := checker.Check()
 			assert.NoError(t, err)
 			assert.Equal(t, tc.expectRC, checker.ReturnCode())
@@ -40,10 +42,11 @@ func TestCPUArchChecker(t *testing.T) {
 }
 
 type mockCPUArchRetriever struct {
-	actual *CPUArchOption
-	err    error
+	exp *expCPUArchOption
+	act *actCPUArchOption
+	err error
 }
 
-func (r *mockCPUArchRetriever) Get() (*CPUArchOption, error) {
-	return r.actual, r.err
+func (r *mockCPUArchRetriever) Collect() (*expCPUArchOption, *actCPUArchOption, error) {
+	return r.exp, r.act, r.err
 }
