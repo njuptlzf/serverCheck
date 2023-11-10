@@ -76,12 +76,14 @@ func (c *DiskAvailChecker) diff(exp *expDiskAvailOption, act *actDiskAvailOption
 		if err != nil {
 			return false, errors.Trace(err)
 		}
+		c.result += fmt.Sprintf("%s: act: %s, exp: %s\n", dir, parse.ParseSize(float64(actSize)), parse.ParseSize(float64(expSize)))
 		// Compare
 		if expSize > actSize {
 			pass = false
 			c.suggestionOnFail += fmt.Sprintf("%s: %s\n", dir, failedSug)
 		}
 	}
+	c.result = c.result[:len(c.result)-1]
 	if !pass {
 		c.suggestionOnFail = c.suggestionOnFail[:len(c.suggestionOnFail)-1]
 	}
