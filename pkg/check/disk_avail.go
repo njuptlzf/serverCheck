@@ -65,14 +65,14 @@ func (c *DiskAvailChecker) diff(exp *expDiskAvailOption, act *actDiskAvailOption
 	pass := true
 
 	// Compare the available space of each directory
-	for i, d := range act.diskForDir {
+	for i, d := range act.diskOfDir {
 		// Actual value: parsed into a readable string
 		_, actSize, _, err := parse.ParseDiskForDir(d)
 		if err != nil {
 			return false, errors.Trace(err)
 		}
 		// Expected value: parsed into a readable string
-		dir, expSize, failedSug, err := parse.ParseDiskForDir(exp.DiskForDir[i])
+		dir, expSize, failedSug, err := parse.ParseDiskForDir(exp.DiskOfDir[i])
 		if err != nil {
 			return false, errors.Trace(err)
 		}
@@ -124,8 +124,8 @@ type expDiskAvailOption struct {
 }
 
 type actDiskAvailOption struct {
-	// The minimum available space for each directory, the format is the same as diskForDir flag
-	diskForDir []string
+	// The minimum available space for each directory, the format is the same as diskOfDir flag
+	diskOfDir []string
 }
 
 type DiskAvailRetriever interface {
@@ -137,8 +137,8 @@ var _ DiskAvailRetriever = &RealDiskAvailRetriever{}
 func (r *RealDiskAvailRetriever) Collect() (*expDiskAvailOption, *actDiskAvailOption, error) {
 	r.act = &actDiskAvailOption{}
 	// The structure of each element: separated by semicolons, directory path, minimum expected value, failed suggestion. For example, /;100G;>= 100G
-	// Loop through DiskForDir, get the actual available space for each directory
-	for _, c := range r.exp.DiskForDir {
+	// Loop through DiskOfDir, get the actual available space for each directory
+	for _, c := range r.exp.DiskOfDir {
 		dir, _, _, err := parse.ParseDiskForDir(c)
 		if err != nil {
 			return nil, nil, errors.Trace(err)
@@ -150,7 +150,7 @@ func (r *RealDiskAvailRetriever) Collect() (*expDiskAvailOption, *actDiskAvailOp
 		}
 		// Parsed into a readable string
 		hunmanSize := parse.ParseSize(actSize)
-		r.act.diskForDir = append(r.act.diskForDir, fmt.Sprintf("%s;%s;", dir, hunmanSize))
+		r.act.diskOfDir = append(r.act.diskOfDir, fmt.Sprintf("%s;%s;", dir, hunmanSize))
 	}
 	return r.exp, r.act, nil
 }

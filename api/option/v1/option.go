@@ -6,5 +6,5 @@ type Option struct {
 	CPUCoreNum int
 	CPUArch    bool
 	DiskAvail  bool
-	DiskForDir []string
+	DiskOfDir  []string
 }

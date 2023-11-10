@@ -32,7 +32,7 @@ func NewInspector() *Inspector {
 
 func (i *Inspector) Validate() (err error) {
 	var aggregationErrs []string
-	for _, c := range i.option.DiskForDir {
+	for _, c := range i.option.DiskOfDir {
 		_, _, _, err := parse.ParseDiskForDir(c)
 		if err != nil {
 			aggregationErrs = append(aggregationErrs, err.Error())

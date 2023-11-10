@@ -64,11 +64,11 @@ func TestDiskAvailChecker(t *testing.T) {
 		t.Run(tc.desc, func(t *testing.T) {
 			exp := &expDiskAvailOption{
 				Option: &optionv1.Option{
-					DiskForDir: tc.expDiskForDir,
+					DiskOfDir: tc.expDiskForDir,
 				},
 			}
 			act := &actDiskAvailOption{
-				diskForDir: tc.actDiskForDir,
+				diskOfDir: tc.actDiskForDir,
 			}
 			checker := newDiskAvailChecker(&mockDiskAvailRetriever{exp: exp, act: act, err: nil})
 			err := checker.Check()
