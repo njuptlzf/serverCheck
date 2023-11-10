@@ -39,9 +39,9 @@ func init() {
 	rootCmd.PersistentFlags().IntVar(&option.Opt.CPUCoreNum, "cpu-core-num", 4, "expect CPU core number")
 	rootCmd.PersistentFlags().BoolVar(&option.Opt.CPUArch, "cpu-arch", true, "check CPU arch")
 	rootCmd.PersistentFlags().BoolVar(&option.Opt.DiskAvail, "disk-avail", true, "check disk avail")
-	rootCmd.PersistentFlags().StringSliceVar(&option.Opt.DiskForDir, "disk-for-dir", []string{"/;100G;>= 100GiB"},
+	rootCmd.PersistentFlags().StringSliceVar(&option.Opt.DiskOfDir, "disk-of-dir", []string{"/;100G;>= 100GiB"},
 		"check disk avail for dir. Use the first two semicolons(;) to separate the three elements: directory path; expected size(Default unit (iB)); failure suggestions.\n"+
-			"Such as --disk-for-dir=\"/var;150G;greater than or equal to 150GiB\" --disk-for-dir=\"/;100G;>= 100GiB\"")
+			"Such as --disk-of-dir=\"/var;150G;greater than or equal to 150GiB\" --disk-of-dir=\"/;100G;>= 100GiB\"")
 }
 
 func Execute() {
