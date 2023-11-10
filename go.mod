@@ -3,6 +3,7 @@ module github.com/njuptlzf/servercheck
 go 1.20
 
 require (
+	github.com/docker/go-units v0.5.0
 	github.com/juju/errors v0.0.0-20220203013757-bd733f3c86b9
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/cobra v1.7.0

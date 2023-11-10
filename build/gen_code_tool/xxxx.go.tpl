@@ -1,22 +1,24 @@
 package check
 
 import (
-	v1 "github.com/njuptlzf/servercheck/api/check/v1"
-	// "github.com/njuptlzf/servercheck/pkg/option"
-	"github.com/njuptlzf/servercheck/pkg/register"
 	"github.com/juju/errors"
+
+	v1 "github.com/njuptlzf/servercheck/api/check/v1"
+	optionv1 "github.com/njuptlzf/servercheck/api/option/v1"
+	"github.com/njuptlzf/servercheck/pkg/option"
+	"github.com/njuptlzf/servercheck/pkg/register"
 )
+
+var _ v1.Checker = &XXXXChecker{}
 
 type XXXXChecker struct {
 	// Name
 	name string
-	// Specific check item
-	item *XXXXOption
 	// Detailed description
 	description string
 	// Suggestion on failure
 	suggestionOnFail string
-	// Return code: fail, warn, or ok
+	// Return code: fail, warn, ok
 	rc v1.ReturnCode
 	// Actual check result
 	result string
@@ -24,62 +26,43 @@ type XXXXChecker struct {
 	retriever XXXXRetriever
 }
 
-// Dedicated check item
-type XXXXOption struct {
-	// to complete
-}
-
-var _ v1.Checker = &XXXXChecker{}
-
 func init() {
-	// to complete
-	register.RegisterCheck(newXXXXChecker(&XXXXOption{}, &RealXXXXRetriever{}))
+	register.RegisterCheck(newXXXXChecker(&RealXXXXRetriever{exp: &expXXXXOption{Option: option.Opt}}))
 }
 
-type XXXXRetriever interface {
-	Get() (*XXXXOption, error)
-}
-
-type RealXXXXRetriever struct{}
-
-var _ XXXXRetriever = &RealXXXXRetriever{}
-
-func (r *RealXXXXRetriever) Get() (*XXXXOption, error) {
-	// to complete
-	return &XXXXOption{}, nil
-}
-
-func newXXXXChecker(item *XXXXOption, retriever XXXXRetriever) *XXXXChecker {
+func newXXXXChecker(retriever XXXXRetriever) *XXXXChecker {
 	return &XXXXChecker{
-		name:      "XXXX",
-		item:      item,
+		name:        "XXXX",
 		description: "check XXXX",
-		retriever: retriever,
+		retriever:   retriever,
 	}
 }
 
 func (c *XXXXChecker) Check() error {
-	actual, err := c.retriever.Get()
+	exp, act, err := c.retriever.Collect()
 	if err != nil {
 		return errors.Trace(err)
 	}
 
-	if c.diff(actual) {
+	// c.rc = v1.WARN
+	c.rc = v1.FAIL
+
+	ok, err := c.diff(exp, act)
+	if err != nil {
+		return errors.Trace(err)
+	}
+	if ok {
 		c.rc = v1.PASS
-	} else {
-		// Returns WARN or FAIL when failed, defined as needed
-		c.rc = v1.FAIL
-		// c.rc = v1.WARN
 	}
 	return nil
 }
 
-func (c *XXXXChecker) diff(actual *XXXXOption) bool {
+func (c *XXXXChecker) diff(exp *expXXXXOption, act *actXXXXOption) (bool, error) {
 	pass := true
 
 	// to complete
 
-	return pass
+	return pass, nil
 }
 
 func (c *XXXXChecker) Name() string {
@@ -100,4 +83,35 @@ func (c *XXXXChecker) Result() string {
 
 func (c *XXXXChecker) SuggestionOnFail() string {
 	return c.suggestionOnFail
+}
+
+// XXXXOption is a dedicated check item
+type RealXXXXRetriever struct {
+	// expect option value
+	exp *expXXXXOption
+
+	// actual option value
+	act *actXXXXOption
+}
+
+type expXXXXOption struct {
+	*optionv1.Option
+}
+
+type actXXXXOption struct {
+	// to complete
+}
+
+type XXXXRetriever interface {
+	Collect() (*expXXXXOption, *actXXXXOption, error)
+}
+
+var _ XXXXRetriever = &RealXXXXRetriever{}
+
+func (r *RealXXXXRetriever) Collect() (*expXXXXOption, *actXXXXOption, error) {
+	r.act = &actXXXXOption{}
+
+	// to complete
+
+	return r.exp, r.act, nil
 }

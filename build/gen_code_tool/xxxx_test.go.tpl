@@ -21,7 +21,7 @@ func TestXXXXChecker(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.desc, func(t *testing.T) {
 			// to complete
-			checker := newXXXXChecker(&XXXXOption{}, &mockXXXXRetriever{actual: &XXXXOption{}, err: nil})
+			checker := newXXXXChecker((&mockXXXXRetriever{exp: &expXXXXOption{}, act: &actXXXXOption{}, err: nil}))
 			err := checker.Check()
 			assert.NoError(t, err)
 			assert.Equal(t, tc.expectRC, checker.ReturnCode())
@@ -30,10 +30,11 @@ func TestXXXXChecker(t *testing.T) {
 }
 
 type mockXXXXRetriever struct {
-	actual *XXXXOption
-	err    error
+	exp *expXXXXOption
+	act *actXXXXOption
+	err error
 }
 
-func (r *mockXXXXRetriever) Get() (*XXXXOption, error) {
-	return r.actual, r.err
+func (r *mockXXXXRetriever) Collect() (*expXXXXOption, *actXXXXOption, error) {
+	return r.exp, r.act, r.err
 }
