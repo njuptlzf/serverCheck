@@ -9,6 +9,7 @@ import (
 	"github.com/njuptlzf/servercheck/pkg/check"
 	"github.com/njuptlzf/servercheck/pkg/option"
 	"github.com/njuptlzf/servercheck/pkg/register"
+	"github.com/njuptlzf/servercheck/pkg/utils/parse"
 )
 
 // Inspector is a checker used to check whether various environmental check items meet the requirements
@@ -27,6 +28,20 @@ func NewInspector() *Inspector {
 		checkers: register.Checks,
 		rc:       checkv1.PASS,
 	}
+}
+
+func (i *Inspector) Validate() (err error) {
+	var aggregationErrs []string
+	for _, c := range i.option.DiskForDir {
+		_, _, _, err := parse.ParseDiskForDir(c)
+		if err != nil {
+			aggregationErrs = append(aggregationErrs, err.Error())
+		}
+	}
+	if len(aggregationErrs) > 0 {
+		err = fmt.Errorf("invalid option: %v", aggregationErrs)
+	}
+	return
 }
 
 func (i *Inspector) Check() error {
@@ -110,6 +125,8 @@ func CheckerEnabled(checker checkv1.Checker) (bool, error) {
 		return option.Opt.CPUCore, nil
 	case *check.CPUArchChecker:
 		return option.Opt.CPUArch, nil
+	case *check.DiskAvailChecker:
+		return option.Opt.DiskAvail, nil
 	default:
 		return false, errors.Errorf("unknown checker %s is not supported, type: %T", checker.Name(), checker)
 	}
