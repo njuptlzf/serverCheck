@@ -4,11 +4,13 @@ import (
 	"testing"
 
 	v1 "github.com/njuptlzf/servercheck/api/check/v1"
+	"github.com/njuptlzf/servercheck/pkg/utils/parse"
+
 	optionv1 "github.com/njuptlzf/servercheck/api/option/v1"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestDiskAvailChecker(t *testing.T) {
+func TestCheck(t *testing.T) {
 	testCases := []struct {
 		desc          string
 		actDiskForDir []string
@@ -87,4 +89,43 @@ type mockDiskAvailRetriever struct {
 
 func (r *mockDiskAvailRetriever) Collect() (*expDiskAvailOption, *actDiskAvailOption, error) {
 	return r.exp, r.act, r.err
+}
+
+func TestCollect(t *testing.T) {
+	testCases := []struct {
+		desc      string
+		actSize   string
+		srcOpt    *expDiskAvailOption
+		expActOpt *actDiskAvailOption
+		err       error
+	}{
+		{
+			desc: "exp == act",
+			srcOpt: &expDiskAvailOption{
+				Option: &optionv1.Option{
+					DiskOfDir: []string{"/var;100G;The minimum available space for is 100G"},
+				},
+			},
+			actSize: "100G",
+			expActOpt: &actDiskAvailOption{
+				diskOfDir: []string{"/var;100GiB;"},
+			},
+			err: nil,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.desc, func(t *testing.T) {
+			retriever := &RealDiskAvailRetriever{
+				exp: tc.srcOpt,
+				Get: func(path string) (float64, error) {
+					size, err := parse.ParseToNumber(tc.actSize)
+					return float64(size), err
+				},
+			}
+			_, act, err := retriever.Collect()
+			assert.Equal(t, tc.expActOpt, act)
+			assert.Equal(t, tc.err, err)
+		})
+	}
 }

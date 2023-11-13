@@ -5,7 +5,6 @@ gen_checker:
 .PHONY: build
 build:
 	go build -o _output/bin/servercheck cmd/main.go
-	chmod +x _output/bin/servercheck
 
 .PHONY: test
 test:

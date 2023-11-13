@@ -30,7 +30,7 @@ type DiskAvailChecker struct {
 }
 
 func init() {
-	register.RegisterCheck(newDiskAvailChecker(&RealDiskAvailRetriever{exp: &expDiskAvailOption{Option: option.Opt}}))
+	register.RegisterCheck(newDiskAvailChecker(&RealDiskAvailRetriever{exp: &expDiskAvailOption{Option: option.Opt}, Get: system.GetAvailableSpace}))
 }
 
 func newDiskAvailChecker(retriever DiskAvailRetriever) *DiskAvailChecker {
@@ -117,6 +117,9 @@ type RealDiskAvailRetriever struct {
 
 	// actual option value
 	act *actDiskAvailOption
+
+	// actual get function
+	Get func(path string) (float64, error)
 }
 
 type expDiskAvailOption struct {
@@ -144,7 +147,7 @@ func (r *RealDiskAvailRetriever) Collect() (*expDiskAvailOption, *actDiskAvailOp
 			return nil, nil, errors.Trace(err)
 		}
 		// Get the actual available space for the directory
-		actSize, err := system.GetAvailableSpace(dir)
+		actSize, err := r.Get(dir)
 		if err != nil {
 			return nil, nil, errors.Trace(err)
 		}
